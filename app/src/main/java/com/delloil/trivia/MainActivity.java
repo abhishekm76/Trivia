@@ -3,9 +3,11 @@ package com.delloil.trivia;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton prevButton;
     private Button falseButton;
     private String toastMessage ="";
-
+    private  int backColor = 0;
     private int currentQuestionIndex =0;
     private List <Question>questionList;
 
@@ -38,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        backColor=getResources().getColor(R.color.colorPrimary);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -60,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void processFinished(ArrayList<Question> questionArrayList) {
                 Log.d(TAG, "processFinished: "+questionArrayList);
                 questionText.setText(questionArrayList.get(currentQuestionIndex).getAnswer());
-                counterText.setText(currentQuestionIndex +" out of " +questionArrayList.size());
+                String qMessage=getResources().getString(R.string.counterMessage);
+                counterText.setText(currentQuestionIndex +qMessage +questionArrayList.size());
             }
         }
         );
@@ -92,10 +97,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void fadeAnimation(){
+        final CardView cardView = findViewById(R.id.cardView);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f,0.0f);
+        alphaAnimation.setDuration(350);
+        alphaAnimation.setRepeatCount(1);
+        alphaAnimation.setRepeatMode(Animation.REVERSE);
+        cardView.setAnimation(alphaAnimation);
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                cardView.setCardBackgroundColor(Color.GREEN);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                cardView.setCardBackgroundColor(backColor);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+
     private void checkAnswer(boolean userAnswer) {
         boolean questionAnswer =questionList.get(currentQuestionIndex).getAnswerTrue();
         if(userAnswer== questionAnswer){
             toastMessage = "Correct";
+            fadeAnimation();
         }else{
             toastMessage ="Wrong";
             shakeanimation();
@@ -106,13 +139,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void updateQuestion() {
         String question = questionList.get(currentQuestionIndex).getAnswer();
         questionText.setText(question);
-        counterText.setText(currentQuestionIndex +" out of "+questionList.size());
+        String qMessage=getResources().getString(R.string.counterMessage);
+        counterText.setText(currentQuestionIndex +qMessage+questionList.size());
     }
 
     private void shakeanimation(){
         Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake);
-        CardView cardView = findViewById(R.id.cardView);
+        final CardView cardView = findViewById(R.id.cardView);
         cardView.setAnimation(shake);
+
+        shake.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+                cardView.setCardBackgroundColor(Color.RED);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                cardView.setCardBackgroundColor(backColor);
+
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
 }

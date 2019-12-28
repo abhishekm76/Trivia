@@ -39,7 +39,8 @@
             android:id="@+id/question_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:layout_gravity="center_vertical"
+            android:text="@string/initialmessage" />
     </androidx.cardview.widget.CardView>
 
     <Button
@@ -96,7 +97,7 @@
         android:layout_marginBottom="16dp"
         android:background="@color/colorPrimaryDark"
         android:fontFamily="@font/chewy"
-        android:text="0 Questions out of 100"
+        android:text="@string/Initalcounter"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="parent" />

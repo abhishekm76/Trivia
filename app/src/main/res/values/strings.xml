@@ -6,4 +6,7 @@
     <string name="previous">previous</string>
     <string name="next">next</string>
     <string name="questioncountertext">out of</string>
+    <string name="initialmessage">Getting Questions</string>
+    <string name="Initalcounter">0 Questions out of 100</string>
+    <string name="counterMessage">" out of "</string>
 </resources>
