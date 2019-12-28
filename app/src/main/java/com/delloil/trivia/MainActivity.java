@@ -1,19 +1,23 @@
 package com.delloil.trivia;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.delloil.trivia.data.AnswerListAsyncResponse;
 import com.delloil.trivia.data.QuestionBank;
 import com.delloil.trivia.model.Question;
 
-import org.w3c.dom.Text;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton nextButton;
     private ImageButton prevButton;
     private Button falseButton;
+    private String toastMessage ="";
 
     private int currentQuestionIndex =0;
     private List <Question>questionList;
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void processFinished(ArrayList<Question> questionArrayList) {
                 Log.d(TAG, "processFinished: "+questionArrayList);
                 questionText.setText(questionArrayList.get(currentQuestionIndex).getAnswer());
+                counterText.setText(currentQuestionIndex +" out of " +questionArrayList.size());
             }
         }
         );
@@ -76,16 +82,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 updateQuestion();
                 break;
             case R.id.true_Button:
+                checkAnswer(true);
+                updateQuestion();
                 break;
             case R.id.false_Button:
+                checkAnswer(false);
+                updateQuestion();
                 break;
         }
+    }
+
+    private void checkAnswer(boolean userAnswer) {
+        boolean questionAnswer =questionList.get(currentQuestionIndex).getAnswerTrue();
+        if(userAnswer== questionAnswer){
+            toastMessage = "Correct";
+        }else{
+            toastMessage ="Wrong";
+            shakeanimation();
+        }
+        Toast.makeText(MainActivity.this,toastMessage,Toast.LENGTH_SHORT).show();
     }
 
     private void updateQuestion() {
         String question = questionList.get(currentQuestionIndex).getAnswer();
         questionText.setText(question);
+        counterText.setText(currentQuestionIndex +" out of "+questionList.size());
     }
 
+    private void shakeanimation(){
+        Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake);
+        CardView cardView = findViewById(R.id.cardView);
+        cardView.setAnimation(shake);
+    }
 
 }
