@@ -9,4 +9,5 @@
     <string name="initialmessage">Getting Questions</string>
     <string name="Initalcounter">0 Questions out of 100</string>
     <string name="counterMessage">" out of "</string>
+    <string name="your_current_score">Your current score</string>
 </resources>

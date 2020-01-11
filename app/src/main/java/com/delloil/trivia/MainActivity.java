@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.delloil.trivia.data.AnswerListAsyncResponse;
 import com.delloil.trivia.data.QuestionBank;
 import com.delloil.trivia.model.Question;
-
+import com.delloil.trivia.model.Score;
 
 
 import java.util.ArrayList;
@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private  int backColor = 0;
     private int currentQuestionIndex =0;
     private List <Question>questionList;
+    private int scoreCounter =0;
+    private Score score;
+    private TextView scoreTextView;
 
     private static final String TAG = "trackmain" ;
 
@@ -45,12 +48,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        score = new Score();//score object created
+
+
         nextButton = findViewById(R.id.next_Button);
         prevButton = findViewById(R.id.prev_Button);
         trueButton = findViewById(R.id.true_Button);
         falseButton = findViewById(R.id.false_Button);
         counterText = findViewById(R.id.counter_textView);
         questionText = findViewById(R.id.question_TextView);
+        scoreTextView = findViewById(R.id.score_text);
 
         nextButton.setOnClickListener(this);
         prevButton.setOnClickListener(this);
@@ -128,12 +135,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         boolean questionAnswer =questionList.get(currentQuestionIndex).getAnswerTrue();
         if(userAnswer== questionAnswer){
             toastMessage = "Correct";
+            addPoints();
             fadeAnimation();
         }else{
             toastMessage ="Wrong";
             shakeanimation();
+            deductPoints();
         }
         Toast.makeText(MainActivity.this,toastMessage,Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void addPoints(){
+        scoreCounter+= 100;
+        score.setScore(scoreCounter );
+        scoreTextView.setText(String.valueOf(score.getScore()));
+         Log.d(TAG, "score"+ score.getScore());
+    }
+
+    private void deductPoints(){
+        scoreCounter-= 100;
+        if (scoreCounter <0) { scoreCounter=0;}
+        score.setScore(scoreCounter );
+        scoreTextView.setText(String.valueOf(score.getScore()));
+        Log.d(TAG, "scoreminus"+ score.getScore());
     }
 
     private void updateQuestion() {
