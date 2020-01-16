@@ -19,8 +19,10 @@ import com.delloil.trivia.data.AnswerListAsyncResponse;
 import com.delloil.trivia.data.QuestionBank;
 import com.delloil.trivia.model.Question;
 import com.delloil.trivia.model.Score;
+import com.delloil.trivia.util.Prefs;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int scoreCounter =0;
     private Score score;
     private TextView scoreTextView;
+    private Prefs prefs;
 
     private static final String TAG = "trackmain" ;
 
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         score = new Score();//score object created
-
+        prefs = new Prefs(MainActivity.this);
 
         nextButton = findViewById(R.id.next_Button);
         prevButton = findViewById(R.id.prev_Button);
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         trueButton.setOnClickListener(this);
         falseButton.setOnClickListener(this);
 
+        scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore()))); // Initial score
         questionList = new QuestionBank().getQuestions(
 
                 new AnswerListAsyncResponse() {
@@ -92,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.next_Button:
                 currentQuestionIndex=(currentQuestionIndex+1)%questionList.size();
                 updateQuestion();
+                prefs.saveHighest(scoreCounter);
+                Log.d(TAG,"high"+prefs.getHigh());
                 break;
             case R.id.true_Button:
                 checkAnswer(true);
@@ -149,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void addPoints(){
         scoreCounter+= 100;
         score.setScore(scoreCounter );
-        scoreTextView.setText(String.valueOf(score.getScore()));
+        scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
          Log.d(TAG, "score"+ score.getScore());
     }
 
@@ -157,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         scoreCounter-= 100;
         if (scoreCounter <0) { scoreCounter=0;}
         score.setScore(scoreCounter );
-        scoreTextView.setText(String.valueOf(score.getScore()));
+        scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
         Log.d(TAG, "scoreminus"+ score.getScore());
     }
 

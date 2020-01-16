@@ -10,4 +10,5 @@
     <string name="Initalcounter">0 Questions out of 100</string>
     <string name="counterMessage">" out of "</string>
     <string name="your_current_score">Your current score</string>
+    <string name="high_score">High Score</string>
 </resources>
