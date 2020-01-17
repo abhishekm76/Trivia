@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Score score;
     private TextView scoreTextView;
     private Prefs prefs;
+    private TextView highScore;
 
     private static final String TAG = "trackmain" ;
 
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         counterText = findViewById(R.id.counter_textView);
         questionText = findViewById(R.id.question_TextView);
         scoreTextView = findViewById(R.id.score_text);
+        highScore=findViewById(R.id.tv_highscore);
 
         nextButton.setOnClickListener(this);
         prevButton.setOnClickListener(this);
@@ -68,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         falseButton.setOnClickListener(this);
 
         scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore()))); // Initial score
+        highScore.setText(MessageFormat.format("Highest Score: {0}", String.valueOf(prefs.getHigh())));
+        currentQuestionIndex = prefs.getState();
+
         questionList = new QuestionBank().getQuestions(
 
                 new AnswerListAsyncResponse() {
@@ -76,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d(TAG, "processFinished: "+questionArrayList);
                 questionText.setText(questionArrayList.get(currentQuestionIndex).getAnswer());
                 String qMessage=getResources().getString(R.string.counterMessage);
-                counterText.setText(currentQuestionIndex +qMessage +questionArrayList.size());
+                counterText.setText(MessageFormat.format("{0}{1}{2}", currentQuestionIndex, qMessage, questionArrayList.size()));
             }
         }
         );
@@ -96,15 +101,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.next_Button:
                 currentQuestionIndex=(currentQuestionIndex+1)%questionList.size();
                 updateQuestion();
-                prefs.saveHighest(scoreCounter);
-                Log.d(TAG,"high"+prefs.getHigh());
+
                 break;
             case R.id.true_Button:
                 checkAnswer(true);
+
                 updateQuestion();
                 break;
             case R.id.false_Button:
                 checkAnswer(false);
+
                 updateQuestion();
                 break;
         }
@@ -126,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onAnimationEnd(Animation animation) {
                 cardView.setCardBackgroundColor(backColor);
+                currentQuestionIndex=(currentQuestionIndex+1)%questionList.size();
+                updateQuestion();
 
             }
 
@@ -171,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String question = questionList.get(currentQuestionIndex).getAnswer();
         questionText.setText(question);
         String qMessage=getResources().getString(R.string.counterMessage);
-        counterText.setText(currentQuestionIndex +qMessage+questionList.size());
+        counterText.setText(MessageFormat.format("{0}{1}{2}", currentQuestionIndex, qMessage, questionList.size()));
     }
 
     private void shakeanimation(){
@@ -190,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onAnimationEnd(Animation animation) {
 
                 cardView.setCardBackgroundColor(backColor);
+                currentQuestionIndex=(currentQuestionIndex+1)%questionList.size();
+                updateQuestion();
 
 
             }
@@ -201,4 +211,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    @Override
+    protected void onPause() {
+        prefs.saveHighest(score.getScore());
+        prefs.setState(currentQuestionIndex);
+        super.onPause();
+
+
+        Log.d(TAG,"high"+prefs.getHigh());
+    }
 }
